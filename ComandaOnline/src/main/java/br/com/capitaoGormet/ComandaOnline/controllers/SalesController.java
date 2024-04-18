@@ -47,7 +47,8 @@ public class SalesController {
 	    public ResponseEntity<Sale> insert(@RequestBody Sale sale) {
 	        List<Order> orders = sale.getOrder();
 	        
-	        // Salva cada Order separadamente
+	        
+	        // Salva cada Order separadamente na TB Order
 	        for (Order order : orders) {
 	        	order.setPrice(order.getPrice()*order.getQuantity());
 	        	order.setRate(order.calculatesValueFull(order.getPrice()));
@@ -58,6 +59,12 @@ public class SalesController {
 	        	saleService.insert(sale);
 	        return new ResponseEntity<>(sale, HttpStatus.CREATED);
 	    }
+	 
+	 
+	 /*Na parte do front-end tem uma pagina na qual vai aver todas as vendas separadas do cliente desejado na busca.
+	  Ou seja vai ser uma Tabela de todas as order daquele cliente e uma sale pode aver varias order.
+	   por tanto oque esse metodo faz é ver em qual sales o order que o usuario deseja excluir está, apos isso ele faz
+	   um update daquela sale removendo apenas a order desejada caso tenha mais de uma order. */
 	 
 	 //pega o pedido que tem mais de uma order que o vendedor quer excluir.
 	 //passando o id da sale e o id da order.
@@ -72,7 +79,7 @@ public class SalesController {
 		saleService.delete(id);
 		return ResponseEntity.ok().build();
 	}
-	//exclui todas as vendas apos o termino do dia e joga para uma plani
+	//exclui todas as vendas apos o termino do dia e joga para uma planilha;
 	@DeleteMapping(value = "/pago" )
 	public ResponseEntity<List<Sale>> pagoSale() throws IOException{
 		List<Sale> result = saleService.findAll();
@@ -93,24 +100,27 @@ public class SalesController {
 		List<Sale> result = saleService.findByIdClientCPF(cpf);
 		return result ;
 	}
+	
 	//pedido detalhado pelo nome
 	@GetMapping(value = "/client/name/{name}")
 	public List<Sale> requestName (@PathVariable String name){	
 		List<Sale> result = saleService.findByIdClientName(name);
 		return result ;
 	}
+	
 	//pedido resumido pelo numero do cpf
 		@GetMapping(value = "/client/summedUp/cpf/{cpf}")
 		public SalesCommandsDTO requesCPF (@PathVariable String cpf ){
 			 SalesCommandsDTO result =  saleService.findByIdClientSumedUpCPF(cpf);
 			return result;	
 		}
-		//pedido resumido pelo NOME dO CLIENTE
-		@GetMapping(value = "/client/summedUp/name/{name}")
-		public SalesCommandsDTO requesCommand(@PathVariable String name ){
-			 SalesCommandsDTO result =  saleService.findByIdClientSumedUpName(name);
-			return result;	
-		}
+		
+	//pedido resumido pelo NOME dO CLIENTE
+	@GetMapping(value = "/client/summedUp/name/{name}")
+	public SalesCommandsDTO requesCommand(@PathVariable String name ){
+		 SalesCommandsDTO result =  saleService.findByIdClientSumedUpName(name);
+		return result;	
+	}
 	
 	//pedido resumido pelo numero da command
 	@GetMapping(value = "/client/summedUp/id/{idCommand}")
@@ -118,7 +128,9 @@ public class SalesController {
 		 SalesCommandsDTO result =  saleService.findByIdClientSumedUpCommand(idCommand);
 		return result;	
 	}
+	
 	//retorna em orde decrecente os cliente que mais gastaram
+	//esse metodo serve mais para descobrir bons clientes
 	@GetMapping("/total")
     public List<Object[]> getTotalSalesByClientOrderedByAmount() {
         return saleService.findTotalSalesByClientOrderedByAmount();

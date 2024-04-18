@@ -19,7 +19,7 @@ import br.com.capitaoGormet.ComandaOnline.services.ClientService;
 
 @CrossOrigin(value = "*")
 @RestController
-@RequestMapping(value = "/cliente")
+@RequestMapping(value = "/client")
 public class ClientController {
 
 	@Autowired
@@ -32,32 +32,32 @@ public class ClientController {
 		return resul;
 	}
 	
+	//pega todos os clientes
 	@GetMapping
 	public List<Client> findAll(){
 		List<Client> result = clienteService.findAll();
 		return result;
 	}
+	
+	//pega pelo numero do cpf o cliente no banco e faz as alterações	
 	@PutMapping
-	public ResponseEntity<Client> update(@PathVariable String id, @RequestBody Client client) {
-		clienteService.update(id, client);
+	public ResponseEntity<Client> update(@PathVariable String cpf, @RequestBody Client client) {
+		clienteService.update(cpf, client);
 		return ResponseEntity.ok(client);
 	}
 	
+	//adiciona um novo cliente
 	@PostMapping
 	public ResponseEntity<Client> insert (@RequestBody Client client){
 		clienteService.insert(client);
 		return new ResponseEntity(client, HttpStatus.CREATED);
 	}
 	
-	@DeleteMapping(value = "/{id}")
-	public ResponseEntity<Client> delete(@PathVariable String id){
-		clienteService.delete(id);
+	//deleta o cliente do cpf passado
+	@DeleteMapping(value = "/{cpf}")
+	public ResponseEntity<Client> delete(@PathVariable String cpf){
+		clienteService.delete(cpf);
 		return ResponseEntity.ok().build();
 	}
 	
-	//@GetMapping(value = "/command/{idCommand}")
-	//public Client findByIdClientCommand(@PathVariable Integer idCommand) {
-	//	Client result = clienteService.findByIdClientCommand(idCommand);
-	//	return result;	
-	//}
 }

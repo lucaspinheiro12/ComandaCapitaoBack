@@ -19,7 +19,7 @@ import br.com.capitaoGormet.ComandaOnline.entities.Product;
 import br.com.capitaoGormet.ComandaOnline.services.ProductService;
 @CrossOrigin(value = "*")
 @RestController
-@RequestMapping(value = "/produtos")
+@RequestMapping(value = "/product")
 public class ProductController {
 
 	@Autowired

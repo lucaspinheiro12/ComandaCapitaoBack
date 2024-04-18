@@ -23,46 +23,55 @@ import br.com.capitaoGormet.ComandaOnline.services.CommandsService;
 
 @CrossOrigin(value = "*")
 @RestController
-@RequestMapping(value = "/commands")
+@RequestMapping(value = "/command")
 public class CommandsController {
 
 	@Autowired
 	private CommandsService commandsService;
 
-	
+	//pego a comanda peno numero do id;
 	@GetMapping(value = "/{id}")
 	public Commands findById (@PathVariable Integer id){
 		Commands resul = commandsService.findById(id);
 		return resul;
 	}
+	
+	//pega a comanda pelo numero do cpf do cliente;
 	@GetMapping(value = "/cpf/{cpf}")
 	public Commands findByCPF(@PathVariable String cpf){
 		Commands result = commandsService.findByCPF(cpf);
 		return result;
 	}
+	
+	//pega a comanda pelo nome do cliente;
 	@GetMapping(value = "/name/{name}")
 	public Commands findByName (@PathVariable String name){
 		Commands result = commandsService.findByName(name);
 		return result;
 	}
 	
+	//pega todas as comandas;
 	@GetMapping
 	public List<Commands> findAll(){
 		List<Commands> result = commandsService.findAll();
 		return result;
 	}
+	
+	//pega a comanda pelo numero do id e faz as alteraçoes;
 	@PutMapping
 	public ResponseEntity<Commands> update(@PathVariable Integer id, @RequestBody Commands commands) {
 		commandsService.update(id, commands);
 		return ResponseEntity.ok(commands);
 	}
 	
+	//insere uma nova comanda;
 	@PostMapping
 	public ResponseEntity<Commands> insert (@RequestBody Commands commands){
 		commandsService.insert(commands);
 		return new ResponseEntity(commands, HttpStatus.CREATED);
 	}
 	
+	//deleta a comanda pelo numero do id;
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Commands> delete(@PathVariable Integer id){
 		commandsService.delete(id);
@@ -70,6 +79,7 @@ public class CommandsController {
 	}
 	
 	//exclui todas as commandas do dia.
+	//metodo apenas para usar apos acabar o dia, fazendo que ele esclua todas as comandas.
 	@DeleteMapping(value = "/encerrar" )
 	public ResponseEntity<List<Sale>> encerrarCommands() throws IOException{
 		List<Commands> result = commandsService.findAll();

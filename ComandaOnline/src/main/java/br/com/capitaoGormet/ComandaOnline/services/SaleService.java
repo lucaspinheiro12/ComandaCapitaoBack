@@ -63,7 +63,8 @@ public class SaleService {
     public void pago(List<Sale> sales) throws IOException {
         // Nome do arquivo Excel
     	List<Object[]> ClientSales = findTotalSalesByClientOrderedByAmount();
-        String filename = "C://git/vendas_" + LocalDate.now() + ".xlsx";
+        String filename = "/home/ubuntu/"
+        		+ "vendas_" + LocalDate.now() + ".xlsx";
 
         // Cria o arquivo Excel
         Workbook workbook = new XSSFWorkbook();
