@@ -28,13 +28,12 @@ public class Sale{
 	private Commands idCommand;
 	@OneToMany( fetch = FetchType.EAGER)
 	private List<Order> order;
-	//private String vendor;
 	@ManyToOne
 	private Employee vendor;
 		
 		public Sale() {}
 	
-	public Sale( Commands commands,List<Order> orders, Employee vendor) {
+	public Sale( Commands commands, Employee vendor) {
 
 		this.idCommand= commands;
 		/*for (Order order : orders) {

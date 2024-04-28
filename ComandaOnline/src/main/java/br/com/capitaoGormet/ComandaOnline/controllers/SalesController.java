@@ -47,7 +47,6 @@ public class SalesController {
 	    public ResponseEntity<Sale> insert(@RequestBody Sale sale) {
 	        List<Order> orders = sale.getOrder();
 	        
-	        
 	        // Salva cada Order separadamente na TB Order
 	        for (Order order : orders) {
 	        	order.setPrice(order.getPrice()*order.getQuantity());

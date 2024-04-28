@@ -35,11 +35,10 @@ public class CommandsService {
 	
 	public Commands findById(Integer id) {
 	    Optional<Commands> commandOptional = commandsRepository.findById(id);
-
 	    if (! commandOptional.isPresent()) {
-	    	return commandOptional.orElseThrow();
+	    	return commandOptional.orElseThrow(() -> new BusinessExectio("Command não encontrada para o ID: " + id));
 	    }
-	    return commandOptional.orElseThrow(() -> new BusinessExectio("Command não encontrada para o ID: " + id));
+	    return commandOptional.orElseThrow();
 	}
 
 	public Commands findByCPF(String CPF) {

@@ -79,7 +79,7 @@ public class CommandsController {
 	}
 	
 	//exclui todas as commandas do dia.
-	//metodo apenas para usar apos acabar o dia, fazendo que ele esclua todas as comandas.
+	//metodo apenas para usar apos acabar o dia, fazendo que ele exclua todas as comandas.
 	@DeleteMapping(value = "/encerrar" )
 	public ResponseEntity<List<Sale>> encerrarCommands() throws IOException{
 		List<Commands> result = commandsService.findAll();

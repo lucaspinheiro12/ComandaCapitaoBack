@@ -54,16 +54,6 @@ public class Client {
 		this.cpf = cpf;
 	}
 	
-
-	public void setIdCommand(Integer idCommand) {
-	//	this.idCommand = idCommand;
-	}
-
-
-	public void setEntry(Double entry) {
-		//this.entry = entry;
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(cpf);

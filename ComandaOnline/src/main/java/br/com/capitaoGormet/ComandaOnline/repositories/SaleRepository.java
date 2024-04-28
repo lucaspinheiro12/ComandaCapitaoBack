@@ -18,6 +18,19 @@ public interface SaleRepository extends JpaRepository<Sale, Integer> {
 	
 	List<Sale> findByIdCommandId_Client_Name(String name);
 	
+	/**
+	 * Retorna uma lista de arrays de objetos contendo informações sobre as vendas totais de cada cliente, 
+	 * ordenadas pelo valor total das vendas em ordem decrescente.
+	 * Cada array contém os seguintes elementos:
+	 *   - clientCpf: CPF do cliente
+	 *   - clientName: Nome do cliente
+	 *   - clientContact: Contato do cliente
+	 *   - totalAmount: Valor total das vendas para esse cliente
+	 * Os valores são calculados somando o produto da quantidade e preço de cada item do pedido, 
+	 * além da taxa associada, para cada venda.
+	 * 
+	 * @return Uma lista de arrays de objetos contendo as informações sobre as vendas totais de cada cliente.
+	 */
 	@Query("SELECT s.idCommand.client.cpf AS clientCpf, s.idCommand.client.name AS clientName, s.idCommand.client.contact AS clientContact, SUM(o.quantity * o.price + o.rate) AS totalAmount " +
 	        "FROM Sale s " +
 	        "JOIN s.idCommand c " +

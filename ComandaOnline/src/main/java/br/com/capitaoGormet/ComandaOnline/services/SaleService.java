@@ -61,12 +61,12 @@ public class SaleService {
 	}
 	
     public void pago(List<Sale> sales) throws IOException {
-        // Nome do arquivo Excel
     	List<Object[]> ClientSales = findTotalSalesByClientOrderedByAmount();
+    	// Nome do arquivo Excel
         String filename = "/home/ubuntu/"
         		+ "vendas_" + LocalDate.now() + ".xlsx";
 
-        // Cria o arquivo Excel
+        // Cria o texto no arquivo Excel
         Workbook workbook = new XSSFWorkbook();
         org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Vendas");
 
@@ -92,7 +92,7 @@ public class SaleService {
             for (Order order : sale.getOrder()) { // Para cada pedido na venda
                 Row row = sheet.createRow(rowNum++);
                 row.createCell(0).setCellValue(sale.getIdCommand().getId()); // ID do comando
-                row.createCell(1).setCellValue(sale.getIdCommand().getClient().getCpf()); // ID do comando
+                row.createCell(1).setCellValue(sale.getIdCommand().getClient().getCpf()); // ID do cliente
                 row.createCell(2).setCellValue(sale.getVendor().getName()); // Nome do vendedor
                 row.createCell(3).setCellValue(order.getProduct().getName()); // Nome do produto
                 row.createCell(4).setCellValue(order.getQuantity()+ order.getRate()); // Quantidade
@@ -172,41 +172,22 @@ public class SaleService {
 
 		    return transforma(result,commands);
 		}
-	private SalesCommandsDTO transforma(List<Sale> result, Commands commands) {
-		Map<Product, Integer> productQuantityMap = new HashMap<>();
-		for (Sale sale : result) {
-			List<Order> orders = sale.getOrder();
+		
+		private SalesCommandsDTO transforma(List<Sale> result, Commands commands) {
+		    // Usando a API de Streams para simplificar o processamento dos pedidos e a contagem de quantidades
+		    Map<Product, Integer> productQuantityMap = result.stream()
+		            .flatMap(sale -> sale.getOrder().stream())
+		            .collect(Collectors.groupingBy(Order::getProduct, Collectors.summingInt(Order::getQuantity)));
 
-			for (Order order : orders) {
-				Product product = order.getProduct();
-			    Integer quantity = order.getQuantity();
+		    // Criando a lista final de pedidos a partir do mapa de quantidades consolidadas
+		    List<Order> listOrder = productQuantityMap.entrySet().stream()
+		            .map(entry -> new Order(entry.getKey(), entry.getValue()))
+		            .collect(Collectors.toList());
 
-			    // Verificar se o produto já está no mapa
-			    if (productQuantityMap.containsKey(product)) {
-			    	// Se estiver, aumentar a quantidade
-			    	int existingQuantity = productQuantityMap.get(product);
-			        productQuantityMap.put(product, existingQuantity + quantity);
-			    } else {
-			        // Se não estiver, adicionar ao mapa
-			        productQuantityMap.put(product, quantity);
-			       }
-			 }
-		}
-		// Criar a lista final de Order com base no mapa
-		List<Order> ListOrder = new ArrayList<>();
-		for (Map.Entry<Product, Integer> entry : productQuantityMap.entrySet()) {
-			Product product = entry.getKey();
-			int quantity = entry.getValue();
-			double price = product.getPrice(); // Defina o preço corretamente
-
-			// Criar um novo Order com a quantidade consolidada
-			Order order = new Order(product, quantity);
-			ListOrder.add(order);
+		    // Criando e retornando o objeto SalesCommandsDTO
+		    return new SalesCommandsDTO(commands, listOrder);
 		}
 
-		SalesCommandsDTO orderConcise = new SalesCommandsDTO(commands, ListOrder);// client.getEntry(),
-		return orderConcise;
-	}
 	
 	  public List<Object[]> findTotalSalesByClientOrderedByAmount() {
 	        return saleRepository.findTotalSalesByClientOrderedByAmount();
